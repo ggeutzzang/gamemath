@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 namespace CK
 {
@@ -8,6 +8,8 @@ struct HSVColor
 public:
 	FORCEINLINE constexpr HSVColor() = default;
     FORCEINLINE constexpr HSVColor(float InH, float InS, float InV) : H(InH), S(InS), V(InV) {}
+    
+    // HSV 색상 체계를 RGB 색상 체계로 변환하는 함수
     FORCEINLINE constexpr LinearColor ToLinearColor() const
 	{
         float r = 0.f, g = 0.f, b = 0.f;
@@ -31,6 +33,7 @@ public:
 	}
 
 public:
+    // HSV 값을 관리하는 멤버 변수
 	float H = 0.f;
 	float S = 1.f;
 	float V = 1.f;
