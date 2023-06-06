@@ -98,9 +98,23 @@ void SoftRenderer::Render2D()
 	static std::vector<Vector2> hearts;
 	HSVColor hsv(0.f, 1.f, 0.85f);
 
+	// 각도에 해당하는 사인과 코사인 크기값 얻기
+	float sin = 0.f, cos = 0.f;
+	Math::GetSinCos(sin, cos, currentDegree);
+
+
 	// 회전 변환행렬의 기저벡터와 행렬
 	Vector2 rBasis1(cos, sin);
 	Vector2 rBasis2(-sin, cos);
+	Matrix2x2 rMatrix(rBasis1, rBasis2);
+
+	// 크기 변환행렬의 기저벡터와 행렬
+	Vector2 sBasis1 = Vector2::UnitX * currentScale;
+	Vector2 sBasis2 = Vector2::UnitY * currentScale;
+	Matrix2x2 sMatrix(sBasis1, sBasis2);
+
+	// 크기, 회전의 순서로 진행하는 합성 변환 행렬의 계산
+	Matrix2x2 finalMatrix = rMatrix * sMatrix;
 
 	// 하트를 구성하는 점 생성
 	if (hearts.empty())
@@ -122,8 +136,14 @@ void SoftRenderer::Render2D()
 	rad = 0.f;
 	for (auto const& v : hearts)
 	{
+		// 1. 점에 행렬을 적용한다
+		Vector2 transfomredV = finalMatrix * v;
+
+		// 2. 변환된 점을 이동한다
+		Vector2 translatedV = transfomredV + currentPosition;
+
 		hsv.H = rad / Math::TwoPI;
-		r.DrawPoint(v, hsv.ToLinearColor());
+		r.DrawPoint(translatedV, hsv.ToLinearColor());
 		rad += increment;
 	}
 
